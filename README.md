@@ -39,7 +39,7 @@ The printed parts do four jobs that steel alone does badly:
 
 | Qty | Part | Notes |
 | --- | --- | --- |
-| 1 | 3/8" x 3" x 7" zinc-plated **square-bend U-bolt** | Everbilt model 810226, about $7.25. Square bend matters: the flat bottom matches the bar. The 3" inside opening clears the 2.75" bar with about 3 mm per side. |
+| 1 | 3/8" **square-bend U-bolt**, 3" or 3-1/4" inside opening, 7" legs | Square bend matters: the flat bottom matches the bar. Both openings work — print the STLs from the matching folder. Everbilt 810226 is the 3" one, about $7.25. |
 | 2 | 3/8"-16 **nylon-insert lock nut**, zinc | Use these instead of the plain nuts in the U-bolt bag. Plain nuts on a roof rack will loosen. |
 | 2 | 3/8" **flat washer** | Or one 3" square U-bolt plate, sold beside the U-bolts, which spreads the load better. |
 | 1 | Printed **saddle** | |
@@ -62,13 +62,12 @@ the U-bolt legs, tape measure, and calipers if you have them.
 
 ## Printing
 
-| | Saddle | Pad | Gauge |
-| --- | --- | --- | --- |
-| Size | 106 x 100 x 30 mm | 74 x 60 x 12 mm | 78 x 12 x 25 mm |
-| TPU at 5 walls / 50% infill | ~84 g | ~29 g | ~8 g |
+| U-bolt | Saddle | Pad | Gauge | Set of four |
+| --- | --- | --- | --- | --- |
+| 3" opening | 106 x 100 x 30 mm, ~85 g | 75 x 60 x 12 mm, ~29 g | ~8 g | ~460 g |
+| 3-1/4" opening | 113 x 100 x 30 mm, ~98 g | 81 x 60 x 12 mm, ~32 g | ~10 g | ~530 g |
 
-A full set of four is roughly 450 g, about half a spool, and a long weekend of
-printing. TPU does not print fast.
+About half a spool, and a long weekend of printing. TPU does not print fast.
 
 - **Material:** TPU 95A works. 98A or 60D is better here — stiffer, and it
   creeps less under sustained clamp load.
@@ -109,8 +108,9 @@ re-slice.
    them to the vehicle. Somewhere around 30–40" apart suits most loads; the
    limit is your crossbar length and your mirrors.
 3. **Mark the holes using the saddle as a drill jig.** Set a saddle on the bar
-   under the board, mark through its two holes, and you have the right
-   3-3/8" pitch automatically, centred across the board's 3.5" width.
+   under the board, mark through its two holes, and you get the right pitch
+   automatically, centred across the board's 3.5" width — 3-3/8" with a 3"
+   U-bolt, 3-5/8" with a 3-1/4" one.
 4. **Drill 7/16"** straight through the 1.5" thickness at all eight
    locations. Seal the fresh holes.
 5. **Assemble each joint** bottom-up: U-bolt around the bar, pad seated under
@@ -148,22 +148,42 @@ nothing here is a manufacturer's specification.
 
 ```
 cad/corebar_2x4_saddle.scad   parametric source; every fit dimension is a named variable
-stl/corebar_2x4_saddle.stl    the top part, print 4
-stl/corebar_2x4_pad.stl       the under-bar pad, print 4
-stl/corebar_2x4_gauge.stl     pocket test slice, print 1 first
+stl/ubolt-3in/                for a 3" inside opening
+stl/ubolt-3.25in/             for a 3-1/4" inside opening
+    saddle.stl                the top part, print 4
+    pad.stl                   the under-bar pad, print 4
+    gauge.stl                 pocket test slice, print 1 first
 docs/img/                     renders
 ```
 
-Re-render after editing the source:
+Re-render after editing the source, setting `ubolt_inside` in mm:
 
 ```sh
-openscad -o stl/corebar_2x4_saddle.stl -D 'part="saddle"' cad/corebar_2x4_saddle.scad
-openscad -o stl/corebar_2x4_pad.stl    -D 'part="pad"'    cad/corebar_2x4_saddle.scad
-openscad -o stl/corebar_2x4_gauge.stl  -D 'part="gauge"'  cad/corebar_2x4_saddle.scad
+for p in saddle pad gauge; do
+  openscad -o "stl/ubolt-3.25in/$p.stl" -D "part=\"$p\"" -D ubolt_inside=82.55 \
+    cad/corebar_2x4_saddle.scad
+done
 ```
 
 `part="assembly"` renders the saddle, pad, bar and board together for checking
 fit on screen.
+
+## If your U-bolt is a different width
+
+Set `ubolt_inside` to the opening you have, in millimetres, and re-render.
+Everything that depends on it follows: the hole pitch, the saddle's footprint,
+and — the part that matters — the thickness of the skirt walls.
+
+That last one is not cosmetic. A 3-1/4" U-bolt on a 2.75" bar leaves about
+1/4" of free space on each side of the bar, so a saddle built for a 3" U-bolt
+would let the bar slide almost half an inch fore-and-aft inside the bend
+before anything stopped it. The model closes that gap by growing the skirt
+walls out to meet the legs, and the leg holes, which are cut full depth,
+scallop a cradle into the outside of each wall so the leg is held against the
+bar rather than floating beside it.
+
+Leg length is not sensitive. The stack — pad, bar, saddle, 2x4, washer and nut
+— comes to about 3-1/2", so 7" legs leave plenty over on any of these.
 
 ## Where the numbers came from
 

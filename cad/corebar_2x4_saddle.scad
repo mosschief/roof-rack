@@ -38,14 +38,18 @@ board_w   = 88.9;  // 3.5 in, the real width of a 2x4
 board_fit = 1.5;   // slack for paint, swelling and saw-rough edges
 
 /* [U-bolt] */
-// Everbilt 810226: 3/8 in square-bend U-bolt, 3 in inside opening, 7 in legs.
+// A 3/8 in square-bend U-bolt.  Set ubolt_inside to the opening you actually
+// bought; the skirt and pad thicken or thin themselves to suit, so the legs
+// always end up cradled tight against the bar.
+//   3     in opening = 76.20  (Everbilt 810226)
+//   3-1/4 in opening = 82.55
 rod_d        = 9.525;  // 3/8 in
-ubolt_inside = 76.2;   // 3 in
+ubolt_inside = 82.55;  // 3-1/4 in
 hole_fit     = 1.4;    // clearance on the leg holes
 
 /* [Saddle] */
 floor_t = 6.0;   // TPU between the crown of the bar and the board
-wall_t  = 3.2;   // skirt wall beside the bar
+wall_t  = 0;     // skirt wall beside the bar; 0 = fill out to the U-bolt legs
 snap    = 5.0;   // how far the skirt wraps below the bar's widest line
 lip_h   = 5.0;   // locating lips that capture the board's width
 end_pad = 4.0;   // material beyond the leg holes, fore and aft
@@ -53,7 +57,7 @@ bead_r  = 1.6;   // bead on the leading face, so FORWARD is obvious
 
 /* [Pad] */
 pad_t    = 4.0;   // TPU between the bar and the bend of the U-bolt
-pad_wall = 2.0;   // side walls that keep the pad located on the bar
+pad_wall = 0;     // side walls; 0 = fill out to just inside the U-bolt legs
 pad_len  = 60.0;  // length along the bar
 pad_gap  = 1.5;   // clearance between pad and saddle
 
@@ -66,7 +70,16 @@ leg_cc   = ubolt_inside + rod_d;            // leg centre-to-centre spacing
 hole_d   = rod_d + hole_fit;
 cav_w    = bar_w + bar_fit;
 cav_h    = bar_h + bar_fit;
-skirt_x  = cav_w + 2 * wall_t;              // fore-and-aft footprint of skirt
+
+// Room between the side of the bar and the inside face of a U-bolt leg.  A
+// wider U-bolt leaves the bar free to slide fore-and-aft inside the bend, so
+// the skirt wall grows to fill that space and the leg holes, cut full depth,
+// scallop it into a cradle that holds each leg against the bar.
+side_gap = (ubolt_inside - cav_w) / 2;
+wall     = (wall_t > 0) ? wall_t : side_gap + 0.7;
+p_wall   = (pad_wall > 0) ? pad_wall : side_gap - 0.75;
+
+skirt_x  = cav_w + 2 * wall;                // fore-and-aft footprint of skirt
 body_x   = leg_cc + hole_d + 2 * end_pad;   // fore-and-aft footprint of slab
 y_in     = (board_w + board_fit) / 2;       // inner face of the locating lips
 body_y   = 2 * (y_in + lip_h);              // length along the bar
@@ -76,17 +89,18 @@ skirt_bz = cav_z - snap;                    // bottom of the saddle skirt
 pad_top  = skirt_bz - pad_gap;
 pad_bot  = cav_bot - pad_t;
 
-// The U-bolt opening is only a few mm wider than the bar, so there is very
-// little room for a skirt wall.  The leg holes are cut full depth on purpose:
-// they scallop the outside of each wall, which cradles the leg against the bar
-// instead of letting it wander.
-side_gap = (ubolt_inside - cav_w) / 2;
 echo(str("drill the 2x4 at this hole pitch: ", leg_cc, " mm = ",
          leg_cc / 25.4, " in"));
 echo(str("clearance per side between bar and U-bolt leg: ", side_gap, " mm"));
+echo(str("skirt wall: ", wall, " mm    pad wall: ", p_wall, " mm"));
 echo(str("grip stack (bar + saddle + board + nut): ",
          (bar_h + floor_t + 38.1 + 10) / 25.4, " in of U-bolt leg"));
 assert(side_gap > 1.5, "U-bolt opening is too small for this bar section");
+assert(wall >= 2.4, "skirt wall too thin to print; use a wider U-bolt");
+// The skirt is deliberately wider than the U-bolt opening: it only has to
+// clear the legs where they actually pass, at the middle of the saddle, and
+// the leg holes cut that clearance themselves.
+assert(cav_w + 2 * p_wall < ubolt_inside, "pad would not fit between the legs");
 assert(pad_top < skirt_bz, "pad and saddle would collide");
 
 // --- geometry --------------------------------------------------------------
@@ -157,7 +171,7 @@ module saddle() {
 module pad() {
     difference() {
         translate([0, 0, (pad_top + pad_bot) / 2])
-            cube([cav_w + 2 * pad_wall, pad_len, pad_top - pad_bot],
+            cube([cav_w + 2 * p_wall, pad_len, pad_top - pad_bot],
                  center = true);
         bar_solid();
     }
