@@ -31,7 +31,7 @@ bar_w        = 69.9;   // 2.75 in, fore-and-aft
 bar_h        = 28.0;   // 1.10 in, vertical, at the thickest point
 bar_tail_r   = 4.0;    // radius of the thin trailing edge
 bar_teardrop = true;   // false gives a symmetric obround pocket
-bar_fit      = 0.4;    // total clearance added to the pocket
+bar_fit      = 1.0;    // total clearance added to the pocket (0.5 per side)
 
 /* [Lumber] */
 board_w   = 88.9;  // 3.5 in, the real width of a 2x4
@@ -51,6 +51,9 @@ hole_fit     = 1.4;    // clearance on the leg holes
 floor_t = 6.0;   // TPU between the crown of the bar and the board
 wall_t  = 0;     // skirt wall beside the bar; 0 = fill out to the U-bolt legs
 snap    = 5.0;   // how far the skirt wraps below the bar's widest line
+tail_open  = true; // leave the thin trailing edge uncovered, see tail_relief()
+tail_open_x = 0;   // where the relief starts; 0 = auto, at the nose's centre
+tail_clear  = 2.0; // how far above the widest line the relief finishes
 lip_h   = 5.0;   // locating lips that capture the board's width
 end_pad = 4.0;   // material beyond the leg holes, fore and aft
 bead_r  = 1.6;   // bead on the leading face, so FORWARD is obvious
@@ -77,13 +80,15 @@ cav_h    = bar_h + bar_fit;
 // scallop it into a cradle that holds each leg against the bar.
 side_gap = (ubolt_inside - cav_w) / 2;
 wall     = (wall_t > 0) ? wall_t : side_gap + 0.7;
-p_wall   = (pad_wall > 0) ? pad_wall : side_gap - 0.75;
+p_wall   = (pad_wall > 0) ? pad_wall : max(2.0, side_gap - 0.75);
 
 skirt_x  = cav_w + 2 * wall;                // fore-and-aft footprint of skirt
 body_x   = leg_cc + hole_d + 2 * end_pad;   // fore-and-aft footprint of slab
 y_in     = (board_w + board_fit) / 2;       // inner face of the locating lips
 body_y   = 2 * (y_in + lip_h);              // length along the bar
 cav_z    = -floor_t - cav_h / 2;            // centre height of the bar pocket
+nose_cx  = -cav_w / 2 + cav_h / 2;          // centre of the teardrop's nose
+relief_x = (tail_open_x != 0) ? tail_open_x : nose_cx;
 cav_bot  = cav_z - cav_h / 2;               // lowest point of the bar
 skirt_bz = cav_z - snap;                    // bottom of the saddle skirt
 pad_top  = skirt_bz - pad_gap;
@@ -93,10 +98,13 @@ echo(str("drill the 2x4 at this hole pitch: ", leg_cc, " mm = ",
          leg_cc / 25.4, " in"));
 echo(str("clearance per side between bar and U-bolt leg: ", side_gap, " mm"));
 echo(str("skirt wall: ", wall, " mm    pad wall: ", p_wall, " mm"));
+echo(str("pocket: ", cav_w, " x ", cav_h, " mm, i.e. ", bar_fit / 2,
+         " mm clearance per side"));
 echo(str("grip stack (bar + saddle + board + nut): ",
          (bar_h + floor_t + 38.1 + 10) / 25.4, " in of U-bolt leg"));
 assert(side_gap > 1.5, "U-bolt opening is too small for this bar section");
 assert(wall >= 2.4, "skirt wall too thin to print; use a wider U-bolt");
+assert(p_wall >= 2.0, "pad wall too thin to print");
 // The skirt is deliberately wider than the U-bolt opening: it only has to
 // clear the legs where they actually pass, at the middle of the saddle, and
 // the leg holes cut that clearance themselves.
@@ -150,6 +158,23 @@ module front_bead() {
             cylinder(r = bead_r, h = body_y, center = true);
 }
 
+// Without this the skirt closes underneath the bar's thin trailing edge -- at
+// the very tip it leaves a 0.7 mm sliver of TPU under the bar, thinner than one
+// perimeter, and the saddle can then only go on by hooking that tip under the
+// bar and rotating the nose over.  The relief cuts the skirt away on the tail
+// side, rising from the full wrap at the nose to just clear of the bar's widest
+// line by the trailing edge, so the saddle drops on and snaps over the nose.
+module tail_relief() {
+    if (tail_open)
+        translate([0, body_y / 2 + 1, 0])
+            rotate([90, 0, 0])
+                linear_extrude(height = body_y + 2)
+                    polygon([[relief_x,     skirt_bz],
+                             [cav_w / 2 + 1, cav_z + tail_clear],
+                             [cav_w / 2 + 1, skirt_bz - 20],
+                             [relief_x,      skirt_bz - 20]]);
+}
+
 module saddle() {
     difference() {
         union() {
@@ -164,6 +189,7 @@ module saddle() {
         }
         bar_solid();
         leg_holes();
+        tail_relief();
     }
 }
 

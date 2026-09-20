@@ -27,7 +27,7 @@ The printed parts do four jobs that steel alone does badly:
   instead of rocking on a line of contact.
 - The **pad** goes under the bar, inside the bend of the U-bolt, so bare
   steel never touches the bar's vinyl coating.
-- Both spread the clamp load over about 4 square inches of bar, which is what
+- Both spread the clamp load over several square inches of bar, which is what
   keeps a hollow steel bar from being dented by a 3/8" bolt.
 - TPU damps vibration. Vibration is what backs nuts off on a roof.
 
@@ -92,13 +92,30 @@ but the print is trivial. The U-bolts locate the board either way.
 
 Yakima publishes the CoreBar section as 2.75" wide by 1.10" tall in their
 JetFlow teardrop shape, and that is what the model defaults to. Those numbers
-came from Yakima's own listing, not from a bar on a bench.
+came from Yakima's own listing, not from a bar on a bench, so treat the first
+gauge print as the real measurement.
 
-Print `gauge` first — it is a 12 mm slice of the pocket and takes a few
-minutes — and push it onto your bar. It should slide on with light thumb
-pressure and stay put. If it is tight, loose, or rocks, measure the bar and
-set `bar_w`, `bar_h` and `bar_tail_r` in the `.scad` file to match, then
-re-slice.
+The saddle drops straight down onto the bar and snaps over the leading edge.
+It does not wrap under the thin trailing edge — the skirt is relieved away on
+that side, rising from a full wrap at the nose to clear of the bar by the
+tail:
+
+![Section through the pocket](docs/img/tail_relief.png)
+
+That matters for fit as much as for assembly. Wrapping the trailing edge left
+a sliver of TPU under the bar thinner than one perimeter and meant the saddle
+could only go on by hooking that tip under the bar and rotating the nose over,
+which reads as "it doesn't fit" even when the pocket itself is the right size.
+
+**Print the fit gauges first.** `stl/fit-gauges/` holds the same 12 mm slice
+at four clearances, from 0.30 mm per side to 0.90 mm. Each takes a few
+minutes. Push them on and keep the loosest one that still has no play when you
+try to rock it — then set `bar_fit` in the `.scad` to that file's number and
+render the real parts. The default is 1.0 mm, which is 0.5 mm per side.
+
+If none of them sit right, the section itself is wrong rather than the
+clearance. Measure the bar with calipers across its widest point and at its
+tallest, and set `bar_w` and `bar_h` to match.
 
 ## Assembly
 
@@ -152,7 +169,8 @@ stl/ubolt-3in/                for a 3" inside opening
 stl/ubolt-3.25in/             for a 3-1/4" inside opening
     saddle.stl                the top part, print 4
     pad.stl                   the under-bar pad, print 4
-    gauge.stl                 pocket test slice, print 1 first
+    gauge.stl                 pocket test slice
+stl/fit-gauges/               the same slice at four clearances; print these first
 docs/img/                     renders
 ```
 
