@@ -115,21 +115,24 @@ listing and the retailers say 2.75" x 1.10". Yakima's own support article says
 A tape measure settles it: a quarter inch across the bar is easy to see, you
 do not need calipers for this.
 
-**Or print the fit gauges.** `stl/fit-gauges/` holds the 12 mm test slice for
-both sections at two clearances each. They take a few minutes. Push them on,
-keep the loosest one with no rock in it, and set `bar_w`, `bar_h` and
-`bar_fit` in the `.scad` to that file's numbers before rendering the real
-parts.
+**The gauges in `stl/fit-gauges/` separate two different problems.** They are
+the 12 mm test slice at 1, 2 and 3 mm of clearance per side, with one, two
+and three notches cut in the top face so you can tell them apart once they
+are off the bed.
 
-| Gauge | `bar_w` | `bar_h` | `bar_fit` |
-| --- | --- | --- | --- |
-| `gauge_bar-2.75x1.10_fit-1.0mm` | 69.9 | 28.0 | 1.0 |
-| `gauge_bar-2.75x1.10_fit-1.6mm` | 69.9 | 28.0 | 1.6 |
-| `gauge_bar-3.00x1.00_fit-1.0mm` | 76.2 | 25.4 | 1.0 |
-| `gauge_bar-3.00x1.00_fit-1.6mm` | 76.2 | 25.4 | 1.6 |
+3 mm per side is far looser than anything would need in service. So:
 
-If none of them sit right, measure the bar across its widest point and at its
-tallest and set `bar_w` and `bar_h` from that.
+- if one of them seats, the section is roughly right and it is only a
+  clearance question — use that file's number as `bar_fit` and move on;
+- if **none** of them seat, including the 3-notch, the pocket is the wrong
+  *shape*, not the wrong size, and no amount of clearance will fix it.
+
+The profile in this model is a guess: a teardrop built as the hull of two
+circles, symmetric top to bottom, with the nose radius forced to half the
+bar's height. Yakima's published cross-section is only inside an image on
+their support page, which cannot be read as text. If the gauges say the shape
+is wrong, trace the end of the bar onto paper, photograph the tracing next to
+a ruler, and set the profile from that instead of from a guess.
 
 ## Assembly
 

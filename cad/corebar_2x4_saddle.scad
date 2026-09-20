@@ -35,6 +35,11 @@ bar_w        = 69.9;   // 2.75 in, fore-and-aft
 bar_h        = 28.0;   // 1.10 in, vertical, at the thickest point
 bar_tail_r   = 4.0;    // radius of the thin trailing edge
 bar_teardrop = true;   // false gives a symmetric obround pocket
+// Most aero crossbars are flat underneath so they can sit in the tower clamp,
+// with all the curve on top.  The teardrop above is symmetric top to bottom,
+// which is a guess.  If the pocket's big end looks too round against the real
+// bar, try this: it puts the curve on top and a flat underside.
+bar_flat_bottom = false;
 bar_fit      = 1.0;    // total clearance added to the pocket (0.5 per side)
 
 /* [Lumber] */
@@ -49,7 +54,7 @@ board_fit = 1.5;   // slack for paint, swelling and saw-rough edges
 //   3     in opening = 76.20  (Everbilt 810226)
 //   3-1/4 in opening = 82.55
 rod_d        = 9.525;  // 3/8 in
-ubolt_inside = 82.55;  // 3-1/4 in
+ubolt_inside = 92.075; // 3-5/8 in
 hole_fit     = 1.4;    // clearance on the leg holes
 // Leg length alone does not tell you whether a U-bolt fits.  The nut has to
 // reach DOWN to the top of the stack, so the thread must already have started
@@ -142,10 +147,19 @@ assert(pad_top < skirt_bz, "pad and saddle would collide");
 module cavity_2d() {
     nose_r = cav_h / 2;
     tail_r = bar_teardrop ? bar_tail_r + bar_fit / 2 : nose_r;
-    hull() {
-        translate([-cav_w / 2 + nose_r, 0]) circle(r = nose_r);
-        translate([ cav_w / 2 - tail_r, 0]) circle(r = tail_r);
-    }
+    if (bar_flat_bottom)
+        translate([0, -cav_h / 2])
+            hull() {
+                translate([-cav_w / 2 + nose_r, cav_h - nose_r]) circle(r = nose_r);
+                translate([ cav_w / 2 - tail_r, cav_h - tail_r]) circle(r = tail_r);
+                translate([-cav_w / 2 + nose_r, 0]) circle(r = 0.01);
+                translate([ cav_w / 2 - tail_r, 0]) circle(r = 0.01);
+            }
+    else
+        hull() {
+            translate([-cav_w / 2 + nose_r, 0]) circle(r = nose_r);
+            translate([ cav_w / 2 - tail_r, 0]) circle(r = tail_r);
+        }
 }
 
 // The bar itself, swept along its own axis, positioned where it will sit.
@@ -229,11 +243,18 @@ module pad() {
 
 // A 12 mm slice of the saddle's pocket.  Prints in a few minutes; push it onto
 // the bar to check the section before printing four full sets.
+gauge_marks = 0;   // notches cut in the top face, so gauges can be told apart
+
 module gauge(t = 12) {
-    intersection() {
-        saddle();
-        translate([0, 0, skirt_bz / 2])
-            cube([skirt_x + 1, t, -skirt_bz], center = true);
+    difference() {
+        intersection() {
+            saddle();
+            translate([0, 0, skirt_bz / 2])
+                cube([skirt_x + 1, t, -skirt_bz], center = true);
+        }
+        for (i = [0 : 1 : gauge_marks - 1])
+            translate([-skirt_x / 2 + 9 + i * 7, 0, 0])
+                cube([3, t + 2, 3], center = true);
     }
 }
 
