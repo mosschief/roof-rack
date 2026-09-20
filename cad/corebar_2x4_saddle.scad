@@ -24,15 +24,21 @@
 /* [What to render] */
 part = "saddle";  // [saddle, pad, gauge, assembly]
 
+include <corebar_profile.scad>
+
 /* [Crossbar section] */
+// The section is now traced from Yakima's own cross-section drawing rather
+// than guessed -- see corebar_profile.scad.  Set bar_measured = false to fall
+// back to the old two-circle teardrop.
+bar_measured = true;
 // Two published sections disagree, and they differ by a quarter inch in
 // width, which is more than the whole design margin.  MEASURE YOUR BAR.
 //   2.75 x 1.10 in = 69.9 x 28.0  (Yakima's product listing, and retailers)
 //   3.00 x 1.00 in = 76.2 x 25.4  (Yakima's own support article)
 // On a 3.00 in bar a 3 in U-bolt cannot close around it at all; a 3-1/4 in
 // one still works.  stl/fit-gauges/ has a test slice for each section.
-bar_w        = 69.9;   // 2.75 in, fore-and-aft
-bar_h        = 28.0;   // 1.10 in, vertical, at the thickest point
+bar_w        = 70.70;  // fore-and-aft, from the drawing
+bar_h        = 27.00;  // vertical at the thickest point, from the drawing
 bar_tail_r   = 4.0;    // radius of the thin trailing edge
 bar_teardrop = true;   // false gives a symmetric obround pocket
 // Most aero crossbars are flat underneath so they can sit in the tower clamp,
@@ -72,7 +78,7 @@ wall_t  = 0;     // skirt wall beside the bar; 0 = fill out to the U-bolt legs
 snap    = 5.0;   // how far the skirt wraps below the bar's widest line
 tail_open  = true; // leave the thin trailing edge uncovered, see tail_relief()
 tail_open_x = 0;   // where the relief starts; 0 = auto, at the nose's centre
-tail_clear  = 2.0; // how far above the widest line the relief finishes
+tail_clear  = 2.0; // unused with the measured section; kept for the old one
 lip_h   = 5.0;   // locating lips that capture the board's width
 end_pad = 4.0;   // material beyond the leg holes, fore and aft
 bead_r  = 1.6;   // bead on the leading face, so FORWARD is obvious
@@ -107,7 +113,11 @@ y_in     = (board_w + board_fit) / 2;       // inner face of the locating lips
 body_y   = 2 * (y_in + lip_h);              // length along the bar
 cav_z    = -floor_t - cav_h / 2;            // centre height of the bar pocket
 nose_cx  = -cav_w / 2 + cav_h / 2;          // centre of the teardrop's nose
-relief_x = (tail_open_x != 0) ? tail_open_x : nose_cx;
+// Start the relief just behind the thickest part of the section, so the
+// skirt wraps the fat end and opens over everything aft of it.
+relief_x = (tail_open_x != 0) ? tail_open_x
+         : bar_measured ? -cav_w / 2 + 0.45 * cav_w
+         : nose_cx;
 cav_bot  = cav_z - cav_h / 2;               // lowest point of the bar
 skirt_bz = cav_z - snap;                    // bottom of the saddle skirt
 pad_top  = skirt_bz - pad_gap;
@@ -145,6 +155,19 @@ assert(pad_top < skirt_bz, "pad and saddle would collide");
 // Section of the bar in the fore-and-aft / vertical plane.  The nose (the
 // thick, rounded edge) points toward -X, which is the front of the vehicle.
 module cavity_2d() {
+    if (bar_measured)
+        offset(r = bar_fit / 2)
+            scale([bar_w / corebar_nominal_w, bar_h / corebar_nominal_h])
+                corebar_profile_2d();
+    else
+        guessed_section_2d();
+}
+
+// The original guess: a teardrop hulled from two circles, symmetric top to
+// bottom, its nose a half-round as tall as the bar.  Kept for comparison.
+// It reached full height within the first quarter of the chord and then
+// tapered, where the real section is still thickening out to 36%.
+module guessed_section_2d() {
     nose_r = cav_h / 2;
     tail_r = bar_teardrop ? bar_tail_r + bar_fit / 2 : nose_r;
     if (bar_flat_bottom)
@@ -196,21 +219,28 @@ module front_bead() {
             cylinder(r = bead_r, h = body_y, center = true);
 }
 
-// Without this the skirt closes underneath the bar's thin trailing edge -- at
-// the very tip it leaves a 0.7 mm sliver of TPU under the bar, thinner than one
-// perimeter, and the saddle can then only go on by hooking that tip under the
-// bar and rotating the nose over.  The relief cuts the skirt away on the tail
-// side, rising from the full wrap at the nose to just clear of the bar's widest
-// line by the trailing edge, so the saddle drops on and snaps over the nose.
+// The skirt would otherwise close underneath the bar aft of its thickest
+// point, so the saddle could only go on by hooking the trailing edge under
+// the bar and rotating the nose over.  A straight-line relief is not enough:
+// the real section's trailing edge curls up to 3.7 mm ABOVE the centreline,
+// so the relief follows the bar's own underside instead of a fixed height.
 module tail_relief() {
     if (tail_open)
         translate([0, body_y / 2 + 1, 0])
             rotate([90, 0, 0])
                 linear_extrude(height = body_y + 2)
-                    polygon([[relief_x,     skirt_bz],
-                             [cav_w / 2 + 1, cav_z + tail_clear],
-                             [cav_w / 2 + 1, skirt_bz - 20],
-                             [relief_x,      skirt_bz - 20]]);
+                    intersection() {
+                        // everything at or below the bar's underside, grown a
+                        // little so the skirt stops just clear of it
+                        translate([0, cav_z])
+                            offset(delta = 0.4)
+                                hull() {
+                                    cavity_2d();
+                                    translate([0, -400]) cavity_2d();
+                                }
+                        // ...but only aft of relief_x
+                        translate([relief_x, cav_z - 300]) square([300, 600]);
+                    }
 }
 
 module saddle() {

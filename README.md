@@ -88,121 +88,56 @@ If you would rather print flat, set `lip_h = 0` and lay the part top-face-down
 on the bed. You lose the lips that hold the board square while you tighten,
 but the print is trivial. The U-bolts locate the board either way.
 
+## The bar section
+
+The pocket is traced from Yakima's own cross-section drawing, not guessed.
+The drawing labels the section **70.7 mm wide by 27.0 mm tall** — about
+2.78" x 1.06", which settles the 2.75" versus 3" question in favour of the
+smaller one.
+
+![Traced section against the original guess](docs/img/profile_compare.png)
+
+The shape matters more than those two numbers. The first version of this
+model built the section as a teardrop hulled from two circles, with the nose
+a half-round as tall as the bar. That reaches full thickness within the first
+quarter of the chord and then tapers away in a straight line. The real
+section keeps thickening to **36% of the chord** and stays fat much further
+back, so the bar fouled the roof of the pocket through its whole middle — it
+simply would not go on, however much clearance was added.
+
+The drawing's own pixels are 70.7 x 29.3 mm rather than 70.7 x 27.0, so it is
+not quite to scale. The labelled figures are what Yakima states, so each axis
+was scaled to them and the outline kept its shape.
+
+`cad/corebar_profile.scad` holds the traced polygon. `bar_w` and `bar_h`
+scale it if your bar measures differently; `bar_measured = false` falls back
+to the old two-circle guess.
+
 ## Check the fit before you print four
 
-Yakima publishes the CoreBar section as 2.75" wide by 1.10" tall in their
-JetFlow teardrop shape, and that is what the model defaults to. Those numbers
-came from Yakima's own listing, not from a bar on a bench, so treat the first
-gauge print as the real measurement.
-
-The saddle drops straight down onto the bar and snaps over the leading edge.
-It does not wrap under the thin trailing edge — the skirt is relieved away on
-that side, rising from a full wrap at the nose to clear of the bar by the
-tail:
+The saddle drops straight down onto the bar and snaps over a small lip at the
+leading edge. It does not wrap under the trailing edge:
 
 ![Section through the pocket](docs/img/tail_relief.png)
 
-That matters for fit as much as for assembly. Wrapping the trailing edge left
-a sliver of TPU under the bar thinner than one perimeter and meant the saddle
-could only go on by hooking that tip under the bar and rotating the nose over,
-which reads as "it doesn't fit" even when the pocket itself is the right size.
+A flat-bottomed skirt cannot do this on the real section, because the
+trailing edge curls up to 3.7 mm *above* the centreline — the skirt would
+close underneath it, and the saddle could then only go on by hooking that tip
+under the bar and rotating the nose over. So the relief follows the bar's own
+underside aft of its thickest point.
 
-**The two published sections disagree, and it matters.** Yakima's product
-listing and the retailers say 2.75" x 1.10". Yakima's own support article says
-3" x 1". That quarter inch is larger than the entire design margin, and on a
-3" bar a 3" U-bolt cannot close around it at all — a 3-1/4" one still can.
+**Print a gauge first.** `stl/fit-gauges/` holds the 12 mm test slice at
+three clearances, notched once, twice and three times so you can tell them
+apart off the bed.
 
-A tape measure settles it: a quarter inch across the bar is easy to see, you
-do not need calipers for this.
+| Gauge | `bar_fit` | Clearance per side |
+| --- | --- | --- |
+| 1 notch | 0.6 | 0.30 mm |
+| 2 notch | 1.0 | 0.50 mm |
+| 3 notch | 1.6 | 0.80 mm |
 
-**The gauges in `stl/fit-gauges/` separate two different problems.** They are
-the 12 mm test slice at 1, 2 and 3 mm of clearance per side, with one, two
-and three notches cut in the top face so you can tell them apart once they
-are off the bed.
-
-3 mm per side is far looser than anything would need in service. So:
-
-- if one of them seats, the section is roughly right and it is only a
-  clearance question — use that file's number as `bar_fit` and move on;
-- if **none** of them seat, including the 3-notch, the pocket is the wrong
-  *shape*, not the wrong size, and no amount of clearance will fix it.
-
-The profile in this model is a guess: a teardrop built as the hull of two
-circles, symmetric top to bottom, with the nose radius forced to half the
-bar's height. Yakima's published cross-section is only inside an image on
-their support page, which cannot be read as text. If the gauges say the shape
-is wrong, trace the end of the bar onto paper, photograph the tracing next to
-a ruler, and set the profile from that instead of from a guess.
-
-## Assembly
-
-1. **Seal the boards.** Paint or varnish them and let them dry before
-   drilling. It is much easier now than later.
-2. **Lay the boards on the bars** where you want them, parallel, and square
-   them to the vehicle. Somewhere around 30–40" apart suits most loads; the
-   limit is your crossbar length and your mirrors.
-3. **Mark the holes using the saddle as a drill jig.** Set a saddle on the bar
-   under the board, mark through its two holes, and you get the right pitch
-   automatically, centred across the board's 3.5" width — 3-3/8" with a 3"
-   U-bolt, 3-5/8" with a 3-1/4" one.
-4. **Drill 7/16"** straight through the 1.5" thickness at all eight
-   locations. Seal the fresh holes.
-5. **Assemble each joint** bottom-up: U-bolt around the bar, pad seated under
-   the bar inside the bend, saddle over the bar with its bead facing forward,
-   board on top, then washers or plate, then lock nuts.
-6. **Tighten evenly**, alternating sides. Stop when the TPU has visibly
-   compressed and the assembly will not twist by hand — roughly 10–12 ft-lb.
-   **Do not lean on it.** The limit here is the crossbar, not the bolt: a
-   CoreBar is hollow steel and a 3/8" U-bolt can crush it.
-7. **Trim the legs** if much is sticking up. Mark, hacksaw, file the burr, and
-   add acorn nuts *on top of* the lock nuts — never in place of them. Exposed
-   threads on a roof catch straps, cargo and hands. Do this after step 8's
-   re-torque, not before, or there may be no thread left to re-torque into.
-8. **Re-tighten after the first 30 miles**, then before every trip. TPU takes
-   a set under load; the first re-torque is not optional.
-
-## Limits and safety
-
-This is a homemade bracket. It has not been load tested or certified, and
-nothing here is a manufacturer's specification.
-
-- **The rack's capacity is whatever your vehicle's roof is rated for, or
-  whatever Yakima rates your towers and bars for, whichever is lower.** Check
-  both. Yakima rack systems are commonly rated around 165 lb dynamic, but it
-  depends on your towers and your vehicle's fitting — look up yours.
-- The rack itself eats into that. Two 8-ft SPF 2x4s plus hardware is roughly
-  25 lb before you load anything.
-- Strap every load directly to the 2x4s, front and back. Do not rely on
-  friction.
-- Anything overhanging the vehicle needs a red flag, and lights at night in
-  many states. Check your state's rules.
-- Check your garage, hatch and tailgate clearance before you drive anywhere.
-- Inspect all eight nuts before every trip.
-
-## Files
-
-```
-cad/corebar_2x4_saddle.scad   parametric source; every fit dimension is a named variable
-stl/ubolt-3in/                for a 3" inside opening
-stl/ubolt-3.25in/             for a 3-1/4" inside opening
-    saddle.stl                the top part, print 4
-    pad.stl                   the under-bar pad, print 4
-    gauge.stl                 pocket test slice
-stl/fit-gauges/               test slices for both candidate sections; print these first
-docs/img/                     renders
-```
-
-Re-render after editing the source, setting `ubolt_inside` in mm:
-
-```sh
-for p in saddle pad gauge; do
-  openscad -o "stl/ubolt-3.25in/$p.stl" -D "part=\"$p\"" -D ubolt_inside=82.55 \
-    cad/corebar_2x4_saddle.scad
-done
-```
-
-`part="assembly"` renders the saddle, pad, bar and board together for checking
-fit on screen.
+Keep the loosest one that has no rock in it, set `bar_fit` to that number and
+render the real parts.
 
 ## Choosing a U-bolt
 
@@ -256,9 +191,10 @@ Leg length is not sensitive. The stack — pad, bar, saddle, 2x4, washer and nut
 
 ## Where the numbers came from
 
-- CoreBar section, 2.75" x 1.10", JetFlow teardrop —
-  [Yakima's CoreBar listing](https://yakima.com/products/corebar) and
-  [etrailer's spec sheet](https://www.etrailer.com/Roof-Rack/Yakima/Y00422.html).
+- CoreBar section, 70.7 x 27.0 mm, traced from the drawing in
+  [Yakima's support article on CoreBar dimensions](https://yakimasupport.zendesk.com/hc/en-us/articles/236010788-CoreBar-Bar-Dimensions).
+  The retailer listings say 2.75" x 1.10", which is close on width and 1 mm
+  out on height.
 - U-bolt, 3/8" x 3" opening x 7" legs, A307 steel, nuts included —
   [Everbilt 810226 at The Home Depot](https://www.homedepot.com/p/Everbilt-3-8-in-x-3-in-x-7-in-Zinc-Plated-Square-U-Bolt-810226/204775849).
 - 2x4 actual dimensions, 1.5" x 3.5" — standard dressed lumber.
