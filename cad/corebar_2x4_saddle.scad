@@ -39,6 +39,7 @@ bar_fit      = 1.0;    // total clearance added to the pocket (0.5 per side)
 
 /* [Lumber] */
 board_w   = 88.9;  // 3.5 in, the real width of a 2x4
+board_t   = 38.1;  // 1.5 in, the real thickness of a 2x4
 board_fit = 1.5;   // slack for paint, swelling and saw-rough edges
 
 /* [U-bolt] */
@@ -50,6 +51,15 @@ board_fit = 1.5;   // slack for paint, swelling and saw-rough edges
 rod_d        = 9.525;  // 3/8 in
 ubolt_inside = 82.55;  // 3-1/4 in
 hole_fit     = 1.4;    // clearance on the leg holes
+// Leg length alone does not tell you whether a U-bolt fits.  The nut has to
+// reach DOWN to the top of the stack, so the thread must already have started
+// by that height.  A long leg with a short thread cannot clamp anything: the
+// nut runs out of thread in mid-air above the board.  Measure both from the
+// tip of the leg.
+ubolt_leg    = 101.6;  // 4 in, inside of the bend to the tip of the leg
+ubolt_thread = 38.1;   // 1-1/2 in of thread, measured down from the tip
+washer_t     = 3.0;    // load-spreading plate or fender washer
+nut_h        = 8.4;    // 3/8-16 nut
 
 /* [Saddle] */
 floor_t = 6.0;   // TPU between the crown of the bar and the board
@@ -104,11 +114,21 @@ echo(str("clearance per side between bar and U-bolt leg: ", side_gap, " mm"));
 echo(str("skirt wall: ", wall, " mm    pad wall: ", p_wall, " mm"));
 echo(str("pocket: ", cav_w, " x ", cav_h, " mm, i.e. ", bar_fit / 2,
          " mm clearance per side"));
-echo(str("grip stack (bar + saddle + board + nut): ",
-         (bar_h + floor_t + 38.1 + 10) / 25.4, " in of U-bolt leg"));
+// Height of the nut's seat above the inside of the U-bolt's bend.
+stack = pad_t + bar_h + floor_t + board_t + washer_t;
+thread_starts = ubolt_leg - ubolt_thread;
+echo(str("nut seats ", stack, " mm = ", stack / 25.4,
+         " in above the inside of the bend"));
+echo(str("so the thread must start by ", stack / 25.4,
+         " in from the bend; yours starts at ", thread_starts / 25.4, " in"));
+echo(str("minimum usable leg: ", (stack + nut_h) / 25.4, " in"));
 assert(side_gap > 1.5, "U-bolt opening is too small for this bar section");
 assert(wall >= 2.4, "skirt wall too thin to print; use a wider U-bolt");
 assert(p_wall >= 2.0, "pad wall too thin to print");
+assert(ubolt_leg >= stack + nut_h,
+       "U-bolt legs are too short to reach through the stack");
+assert(thread_starts <= stack,
+       "U-bolt thread does not reach far enough down the leg: the nut runs out of thread before it touches the stack. Use a shorter leg or a longer thread.");
 // The skirt is deliberately wider than the U-bolt opening: it only has to
 // clear the legs where they actually pass, at the middle of the saddle, and
 // the leg holes cut that clearance themselves.
@@ -222,7 +242,7 @@ module assembly() {
     pad();
     color("dimgray", 0.55) bar_solid(len = 600, grow = -bar_fit / 2);
     color("burlywood", 0.45)
-        translate([0, 0, 38.1 / 2]) cube([600, board_w, 38.1], center = true);
+        translate([0, 0, board_t / 2]) cube([600, board_w, board_t], center = true);
 }
 
 if      (part == "saddle")   saddle();

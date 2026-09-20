@@ -39,7 +39,7 @@ The printed parts do four jobs that steel alone does badly:
 
 | Qty | Part | Notes |
 | --- | --- | --- |
-| 1 | 3/8" **square-bend U-bolt**, 3" or 3-1/4" inside opening, 7" legs | Square bend matters: the flat bottom matches the bar. Both openings work — print the STLs from the matching folder. Everbilt 810226 is the 3" one, about $7.25. |
+| 1 | 3/8" **square-bend U-bolt** — see "Choosing a U-bolt" below | Leg length and thread length both matter, and the obvious 7" part does not work. |
 | 2 | 3/8"-16 **nylon-insert lock nut**, zinc | Use these instead of the plain nuts in the U-bolt bag. Plain nuts on a roof rack will loosen. |
 | 2 | 3/8" **flat washer** | Or one 3" square U-bolt plate, sold beside the U-bolts, which spreads the load better. |
 | 1 | Printed **saddle** | |
@@ -151,9 +151,10 @@ tallest and set `bar_w` and `bar_h` from that.
    compressed and the assembly will not twist by hand — roughly 10–12 ft-lb.
    **Do not lean on it.** The limit here is the crossbar, not the bolt: a
    CoreBar is hollow steel and a 3/8" U-bolt can crush it.
-7. **Trim the legs.** With 7" legs and a 3.5" stack, about 3.5" of thread will
-   stick up. Mark, hacksaw, file the burr, and cap them with acorn nuts.
-   Exposed threads on a roof catch straps, cargo and hands.
+7. **Trim the legs** if much is sticking up. Mark, hacksaw, file the burr, and
+   add acorn nuts *on top of* the lock nuts — never in place of them. Exposed
+   threads on a roof catch straps, cargo and hands. Do this after step 8's
+   re-torque, not before, or there may be no thread left to re-torque into.
 8. **Re-tighten after the first 30 miles**, then before every trip. TPU takes
    a set under load; the first re-torque is not optional.
 
@@ -199,6 +200,39 @@ done
 
 `part="assembly"` renders the saddle, pad, bar and board together for checking
 fit on screen.
+
+## Choosing a U-bolt
+
+Three numbers matter, and the third is the one that catches people.
+
+1. **Inside opening** — must clear the bar with a little room for the skirt
+   walls. 3-1/4" suits either published bar section. 3" only works if the bar
+   really is 2.75" wide.
+2. **Leg length** — at least **3-1/2"**, measured from the inside of the bend
+   to the tip. Below that the nut has nothing to bite.
+3. **Thread length** — the nut has to reach *down* to the top of the stack,
+   which sits **3.1" above the inside of the bend**. So the thread has to have
+   started by then:
+
+   > thread length ≥ leg length − 3.1"
+
+A 7" leg therefore needs nearly 4" of thread. Square U-bolts that long are
+typically threaded only 1-1/2" from each tip, so the nut runs out of thread in
+mid-air above the board and never touches it. Long legs are not the safe
+choice here; they are the failure.
+
+| Leg | Thread needed | Verdict |
+| --- | --- | --- |
+| 3-1/2" | 3/8" | tight but works |
+| 4" | 7/8" | comfortable, the sweet spot |
+| 4-1/2" | 1-3/8" | fine |
+| 5" | 1-7/8" | check the listing carefully |
+| 7" | 3-7/8" | will not work unless fully threaded |
+
+Fully threaded legs sidestep the whole issue.
+
+Set `ubolt_leg` and `ubolt_thread` in the `.scad` to whatever you are holding
+and it will refuse to render, with the reason, if the nut cannot reach.
 
 ## If your U-bolt is a different width
 
