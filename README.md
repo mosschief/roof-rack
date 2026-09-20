@@ -107,15 +107,29 @@ a sliver of TPU under the bar thinner than one perimeter and meant the saddle
 could only go on by hooking that tip under the bar and rotating the nose over,
 which reads as "it doesn't fit" even when the pocket itself is the right size.
 
-**Print the fit gauges first.** `stl/fit-gauges/` holds the same 12 mm slice
-at four clearances, from 0.30 mm per side to 0.90 mm. Each takes a few
-minutes. Push them on and keep the loosest one that still has no play when you
-try to rock it — then set `bar_fit` in the `.scad` to that file's number and
-render the real parts. The default is 1.0 mm, which is 0.5 mm per side.
+**The two published sections disagree, and it matters.** Yakima's product
+listing and the retailers say 2.75" x 1.10". Yakima's own support article says
+3" x 1". That quarter inch is larger than the entire design margin, and on a
+3" bar a 3" U-bolt cannot close around it at all — a 3-1/4" one still can.
 
-If none of them sit right, the section itself is wrong rather than the
-clearance. Measure the bar with calipers across its widest point and at its
-tallest, and set `bar_w` and `bar_h` to match.
+A tape measure settles it: a quarter inch across the bar is easy to see, you
+do not need calipers for this.
+
+**Or print the fit gauges.** `stl/fit-gauges/` holds the 12 mm test slice for
+both sections at two clearances each. They take a few minutes. Push them on,
+keep the loosest one with no rock in it, and set `bar_w`, `bar_h` and
+`bar_fit` in the `.scad` to that file's numbers before rendering the real
+parts.
+
+| Gauge | `bar_w` | `bar_h` | `bar_fit` |
+| --- | --- | --- | --- |
+| `gauge_bar-2.75x1.10_fit-1.0mm` | 69.9 | 28.0 | 1.0 |
+| `gauge_bar-2.75x1.10_fit-1.6mm` | 69.9 | 28.0 | 1.6 |
+| `gauge_bar-3.00x1.00_fit-1.0mm` | 76.2 | 25.4 | 1.0 |
+| `gauge_bar-3.00x1.00_fit-1.6mm` | 76.2 | 25.4 | 1.6 |
+
+If none of them sit right, measure the bar across its widest point and at its
+tallest and set `bar_w` and `bar_h` from that.
 
 ## Assembly
 
@@ -170,7 +184,7 @@ stl/ubolt-3.25in/             for a 3-1/4" inside opening
     saddle.stl                the top part, print 4
     pad.stl                   the under-bar pad, print 4
     gauge.stl                 pocket test slice
-stl/fit-gauges/               the same slice at four clearances; print these first
+stl/fit-gauges/               test slices for both candidate sections; print these first
 docs/img/                     renders
 ```
 

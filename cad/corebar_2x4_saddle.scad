@@ -25,8 +25,12 @@
 part = "saddle";  // [saddle, pad, gauge, assembly]
 
 /* [Crossbar section] */
-// Yakima publishes the CoreBar as 2.75 in wide x 1.10 in tall, in their
-// "JetFlow" teardrop shape.  MEASURE YOUR BAR and correct these if needed.
+// Two published sections disagree, and they differ by a quarter inch in
+// width, which is more than the whole design margin.  MEASURE YOUR BAR.
+//   2.75 x 1.10 in = 69.9 x 28.0  (Yakima's product listing, and retailers)
+//   3.00 x 1.00 in = 76.2 x 25.4  (Yakima's own support article)
+// On a 3.00 in bar a 3 in U-bolt cannot close around it at all; a 3-1/4 in
+// one still works.  stl/fit-gauges/ has a test slice for each section.
 bar_w        = 69.9;   // 2.75 in, fore-and-aft
 bar_h        = 28.0;   // 1.10 in, vertical, at the thickest point
 bar_tail_r   = 4.0;    // radius of the thin trailing edge
