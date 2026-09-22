@@ -137,7 +137,8 @@ apart off the bed.
 | 3 notch | 1.6 | 0.80 mm |
 
 Keep the loosest one that has no rock in it, set `bar_fit` to that number and
-render the real parts.
+render the real parts. On Sean's bar the 1-notch gauge (0.3 mm per side) fit
+best, and that is now the default.
 
 ## Choosing a U-bolt
 

@@ -46,7 +46,7 @@ bar_teardrop = true;   // false gives a symmetric obround pocket
 // which is a guess.  If the pocket's big end looks too round against the real
 // bar, try this: it puts the curve on top and a flat underside.
 bar_flat_bottom = false;
-bar_fit      = 1.0;    // total clearance added to the pocket (0.5 per side)
+bar_fit      = 0.6;    // total clearance added to the pocket (0.3 per side)
 
 /* [Lumber] */
 board_w   = 88.9;  // 3.5 in, the real width of a 2x4
