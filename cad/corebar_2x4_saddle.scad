@@ -20,7 +20,9 @@
 // Three parts:
 //   saddle - sits on top of the bar, under the board; printed
 //   pad    - sits under the bar, on top of the steel plate; printed
-//   plate  - 1/4 x 1-1/2 in steel flat bar, cut and drilled by hand.
+//   plate  - steel flat bar, 1-1/2 in wide, cut and drilled by hand; by
+//            default two layers of 3/16 in stacked, which is a little
+//            stronger than a single 1/4 in plate.
 //            part = "plate_template" gives a 1:1 drawing to export as SVG,
 //            print at 100% and stick to the steel.
 //
@@ -70,7 +72,7 @@ bolt_gap    = 3.0;    // free space between the bar pocket and each bolt
 // The saddle's holes are a light grip on the bolt shank, so the saddle stays
 // on the board when it comes off the car.
 hole_fit    = 0.3;
-bolt_len    = 114.3;  // 4-1/2 in, under the head to the tip
+bolt_len    = 101.6;  // 4 in, under the head to the tip
 bolt_thread = 38.1;   // 1-1/2 in of thread, measured up from the tip
 washer_t    = 3.0;    // 3/8 x 1-1/4 in fender washer; it spans the notch
 knob_h      = 8.4;    // thread the knob (or nut) needs to hold, 3/8-16
@@ -83,7 +85,15 @@ swing_side = 1;        // [1, -1] +1 swings the free end toward +Y
 
 /* [Clamp plate] */
 plate_w     = 38.1;   // 1-1/2 in flat bar
-plate_t     = 6.35;   // 1/4 in
+// The plate is loaded like a beam: the knobs pull its ends up and the bar
+// pushes its middle down.  Strength goes with the square of the thickness,
+// so a single 3/16 in plate sees nearly twice the stress of a 1/4 in one and
+// bends under a firm hand on the knobs.  Two loose 3/16 in layers are
+// slightly stronger than one 1/4 in plate; epoxied together, about twice as
+// strong.
+plate_ply    = 4.7625; // 3/16 in stock
+plate_layers = 2;      // layers stacked in each plate
+plate_t      = plate_ply * plate_layers;
 plate_end   = 16.0;   // steel beyond each bolt centre
 plate_hole  = 11.1;   // 7/16 in drill
 swing_clear = 1.0;    // room around the bolt while the plate swings past it
@@ -176,8 +186,9 @@ engaged_open  = engaged - drop;             // ...and backed off to swing
 
 echo(str("drill the 2x4 3/8 in at this hole pitch: ", bolt_cc, " mm = ",
          bolt_cc / 25.4, " in"));
-echo(str("plate: ", plate_len, " mm = ", plate_len / 25.4, " in of flat bar, ",
-         "holes at ", plate_end, " mm from each end"));
+echo(str("plate: ", plate_layers, " x ", plate_len, " mm = ",
+         plate_len / 25.4, " in of flat bar, holes at ", plate_end,
+         " mm from each end"));
 echo(str("notch: ", notch_out - notch_in, " mm wide, near edge ",
          notch_in, " mm from the pivot hole"));
 echo(str("skirt wall: ", wall, " mm    pad wall: ", p_wall, " mm"));
@@ -351,9 +362,10 @@ module plate_2d() {
 }
 
 module plate() {
-    translate([0, 0, plate_bot])
-        linear_extrude(height = plate_t)
-            plate_2d();
+    for (i = [0 : plate_layers - 1])
+        translate([0, 0, plate_bot + i * plate_ply])
+            linear_extrude(height = plate_ply - 0.05)
+                plate_2d();
 }
 
 // 1:1 drilling and cutting template.  Export as SVG, print at 100% scale,

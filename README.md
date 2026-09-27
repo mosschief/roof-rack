@@ -74,10 +74,10 @@ anything comes to the bolt is 0.8 mm.
 
 | Qty | Part | Notes |
 | --- | --- | --- |
-| 2 | 3/8"-16 x 4-1/2" **carriage bolt**, zinc or stainless | 4" also works; see "Choosing bolts" below. |
+| 2 | 3/8"-16 x 4" **carriage bolt**, zinc or stainless | 4-1/2" gives more margin; see "Choosing bolts" below. |
 | 2 | 3/8"-16 **through-hole hand knob** (five-star or T) | Through-hole, not blind, so the bolt can pass. A steel-hub knob takes more torque than an all-plastic one. |
 | 2 | 3/8" x 1-1/4" **fender washer** | Wide enough to bridge the notch in the plate. |
-| — | 1/4" x 1-1/2" **steel flat bar**, 4-11/16" per bracket | One 36" stick makes all four plates with room to spare. |
+| — | 3/16" x 1-1/2" **steel flat bar**, two 4-11/16" pieces per bracket | Eight pieces for the rack, 37-1/2" plus saw kerfs, so buy a 48" stick. A single 1/4" plate per bracket works too; see "Making the plates". |
 | 1 | Printed **saddle** | |
 | 1 | Printed **pad** | |
 | — | Flexible adhesive | Shoe Goo, E6000 or contact cement, to bond the pad to the plate. |
@@ -108,14 +108,29 @@ Render `part = "plate_template"`, export it as SVG, print it at **100%
 scale**, and check the 50 mm bar on it with a ruler. A copy is in
 `stl/plate_template.svg` for the default settings.
 
-1. Cut 4-11/16" (119 mm) of flat bar per plate and square the ends.
-2. Glue the template on, centre-punch both crosshairs, and drill **7/16"**.
-3. At the notched end, hacksaw the two straight lines from the hole out to
+Each plate is **two layers of 3/16" flat bar**, stacked. The plate is
+loaded like a beam — the knobs pull its ends up and the bar pushes its
+middle down — and bending strength goes with the square of the thickness, so a
+single 3/16" layer sees nearly twice the stress of a 1/4" plate and bends
+under a firm hand on the knobs. Two loose layers are slightly stronger than
+one 1/4" plate. Epoxied together they act as one 3/8" plate, about twice as
+strong again, which is worth doing. If you have 1/4" stock, set
+`plate_ply = 6.35` and `plate_layers = 1`.
+
+1. Cut two 4-11/16" (119 mm) pieces of flat bar per plate and square the
+   ends.
+2. Clamp each pair together, edges flush, and treat it as one piece from
+   here on so the holes and notch line up.
+3. Glue the template on, centre-punch both crosshairs, and drill **7/16"**
+   through both layers.
+4. At the notched end, hacksaw the two straight lines from the hole out to
    the edge and snap or file out the waste. The notch is about 9/16"
    (14 mm) wide, and is deliberately off-centre on the hole, toward the
    pivot.
-4. Break every edge with a file, then paint or zinc-spray the plate.
-5. Bond the printed pad onto the plate, in its channel, curved face up.
+5. Break every edge with a file. Optionally epoxy the two layers together
+   (JB Weld or similar, on clean, sanded faces), then paint or zinc-spray
+   the plate.
+6. Bond the printed pad onto the plate, in its channel, curved face up.
 
 ## Printing
 
@@ -220,15 +235,19 @@ best, and that is now the default.
 
 Two numbers matter.
 
-1. **Length** — the knob sits **3.35" below the head**, and it has to keep
+1. **Length** — the knob sits **3.47" below the head**, and it has to keep
    enough thread to hold when it is backed off 3 turns to swing the plate.
-   That makes **4"** the shortest bolt that works, with little to spare.
-   **4-1/2"** is the default and leaves room for paint, a swollen board or
-   a thicker washer. Longer only adds steel hanging under the bar: at 4-1/2"
-   the tip is 1.7" below the bar, so check it clears the roof, especially
-   near the edges where the roof curves down.
+   **4"** is the default and the shortest bolt that works: it leaves 13 mm
+   of thread in the knob when clamped and 9.4 mm when backed off, against
+   the 8.4 mm of a standard nut. That is only about 1 mm spare, so a
+   swollen board or a thick coat of paint can use it up. The model assumes
+   a 3 mm washer; most fender washers are 1.5–2 mm, so measure yours and
+   set `washer_t` to get that back. **4-1/2"** bolts give plenty of room,
+   at the cost of the tip hanging 1.7" below the bar instead of 1.2" —
+   check it clears the roof, especially near the edges where the roof
+   curves down.
 2. **Thread length** — the knob has to be able to run up to the plate, so
-   the thread must start less than 3.35" below the head. Carriage bolts in
+   the thread must start less than 3.47" below the head. Carriage bolts in
    these lengths are usually threaded 1-1/2" or more, which is plenty.
 
 Set `bolt_len` and `bolt_thread` in the `.scad` to whatever you are holding.
@@ -263,5 +282,5 @@ assembly with the plate swung out, to check a change.
   The retailer listings say 2.75" x 1.10", which is close on width and 1 mm
   out on height.
 - 2x4 actual dimensions, 1.5" x 3.5" — standard dressed lumber.
-- 3/8"-16 carriage bolts, fender washers, hand knobs and 1/4" x 1-1/2" flat
+- 3/8"-16 carriage bolts, fender washers, hand knobs and 3/16" x 1-1/2" flat
   bar — standard hardware-store stock.
