@@ -77,7 +77,7 @@ anything comes to the bolt is 0.8 mm.
 | 2 | 3/8"-16 x 4" **carriage bolt**, zinc or stainless | 4-1/2" gives more margin; see "Choosing bolts" below. |
 | 2 | 3/8"-16 **through-hole hand knob** (five-star or T) | Through-hole, not blind, so the bolt can pass. A steel-hub knob takes more torque than an all-plastic one. |
 | 2 | 3/8" x 1-1/4" **fender washer** | Wide enough to bridge the notch in the plate. |
-| — | 3/16" x 1-1/2" **steel flat bar**, two 4-11/16" pieces per bracket | Eight pieces for the rack, 37-1/2" plus saw kerfs, so buy a 48" stick. A single 1/4" plate per bracket works too; see "Making the plates". |
+| — | 3/16" x 1-1/2" **steel flat bar**, 4-11/16" per bracket | One 36" stick makes all four plates with room to spare. Thicker is stronger; see "Making the plates". |
 | 1 | Printed **saddle** | |
 | 1 | Printed **pad** | |
 | — | Flexible adhesive | Shoe Goo, E6000 or contact cement, to bond the pad to the plate. |
@@ -85,8 +85,8 @@ anything comes to the bolt is 0.8 mm.
 **Knobs and vibration.** A hand-tight knob will not hold as much preload as a
 wrenched lock nut, so check the knobs before every trip and after the first
 twenty miles with a load. If one keeps working loose, put a split lock washer
-under that knob, or use a steel wing nut instead: still no tools, and you can
-lean on it harder. Knobs also make the rack easy to steal. One keyed or
+under that knob rather than tightening harder — see "Snug, don't crank"
+below. Knobs also make the rack easy to steal. One keyed or
 security nut per board fixes that.
 
 ### For the rack
@@ -108,29 +108,38 @@ Render `part = "plate_template"`, export it as SVG, print it at **100%
 scale**, and check the 50 mm bar on it with a ruler. A copy is in
 `stl/plate_template.svg` for the default settings.
 
-Each plate is **two layers of 3/16" flat bar**, stacked. The plate is
-loaded like a beam — the knobs pull its ends up and the bar pushes its
-middle down — and bending strength goes with the square of the thickness, so a
-single 3/16" layer sees nearly twice the stress of a 1/4" plate and bends
-under a firm hand on the knobs. Two loose layers are slightly stronger than
-one 1/4" plate. Epoxied together they act as one 3/8" plate, about twice as
-strong again, which is worth doing. If you have 1/4" stock, set
-`plate_ply = 6.35` and `plate_layers = 1`.
-
-1. Cut two 4-11/16" (119 mm) pieces of flat bar per plate and square the
-   ends.
-2. Clamp each pair together, edges flush, and treat it as one piece from
-   here on so the holes and notch line up.
-3. Glue the template on, centre-punch both crosshairs, and drill **7/16"**
-   through both layers.
-4. At the notched end, hacksaw the two straight lines from the hole out to
+1. Cut 4-11/16" (119 mm) of 3/16" flat bar per plate and square the ends.
+2. Clamp it down, glue the template on, centre-punch both crosshairs, and
+   drill **7/16"**.
+3. At the notched end, hacksaw the two straight lines from the hole out to
    the edge and snap or file out the waste. The notch is about 9/16"
    (14 mm) wide, and is deliberately off-centre on the hole, toward the
    pivot.
-5. Break every edge with a file. Optionally epoxy the two layers together
-   (JB Weld or similar, on clean, sanded faces), then paint or zinc-spray
-   the plate.
-6. Bond the printed pad onto the plate, in its channel, curved face up.
+4. Break every edge with a file, then paint or zinc-spray the plate.
+5. Bond the printed pad onto the plate, in its channel, curved face up.
+
+### Snug, don't crank
+
+The plate is loaded like a beam: the knobs pull its ends up and the bar
+pushes its middle down. A single 3/16" plate stays straight up to roughly
+1.4 kN (300 lbf) of pull per bolt — snug on a star knob, then a little
+more. Leaning on the knobs with both hands goes past that, and the plate
+takes a permanent bow around the bar. Nothing lets go when that happens,
+since the plate is still captive on both bolts, but a bowed plate holds less
+clamp and the knobs work loose sooner.
+
+That lighter clamp is plenty. The bolts either side of the bar stop the
+board sliding fore-and-aft and the saddle wraps the bar; only sliding
+along the bar is left to friction, and four brackets clamping even that
+lightly give well over 1000 lbf of it.
+
+After the first few trips, take a plate off and lay a straightedge across
+it. If it has started to bow, tighten more gently, or go thicker: bending
+strength goes with the square of the thickness, so 1/4" plate takes about
+1.8 times the load, and two 3/16" layers stacked (`plate_layers = 2`)
+slightly more than that — twice as much again if the layers are epoxied
+together. Thicker plates need more bolt; the model will say if yours is
+too short.
 
 ## Printing
 
@@ -235,19 +244,15 @@ best, and that is now the default.
 
 Two numbers matter.
 
-1. **Length** — the knob sits **3.47" below the head**, and it has to keep
+1. **Length** — the knob sits **3.29" below the head**, and it has to keep
    enough thread to hold when it is backed off 3 turns to swing the plate.
-   **4"** is the default and the shortest bolt that works: it leaves 13 mm
-   of thread in the knob when clamped and 9.4 mm when backed off, against
-   the 8.4 mm of a standard nut. That is only about 1 mm spare, so a
-   swollen board or a thick coat of paint can use it up. The model assumes
-   a 3 mm washer; most fender washers are 1.5–2 mm, so measure yours and
-   set `washer_t` to get that back. **4-1/2"** bolts give plenty of room,
-   at the cost of the tip hanging 1.7" below the bar instead of 1.2" —
-   check it clears the roof, especially near the edges where the roof
-   curves down.
+   **4"** is the default: it leaves 18 mm of thread in the knob when
+   clamped and 14 mm when backed off, against the 8.4 mm of a standard
+   nut, which is room for paint or a swollen board. The tip hangs 1.2"
+   below the bar; check it clears the roof, especially near the edges
+   where the roof curves down. Longer bolts only add to that.
 2. **Thread length** — the knob has to be able to run up to the plate, so
-   the thread must start less than 3.47" below the head. Carriage bolts in
+   the thread must start less than 3.29" below the head. Carriage bolts in
    these lengths are usually threaded 1-1/2" or more, which is plenty.
 
 Set `bolt_len` and `bolt_thread` in the `.scad` to whatever you are holding.

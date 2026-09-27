@@ -20,9 +20,7 @@
 // Three parts:
 //   saddle - sits on top of the bar, under the board; printed
 //   pad    - sits under the bar, on top of the steel plate; printed
-//   plate  - steel flat bar, 1-1/2 in wide, cut and drilled by hand; by
-//            default two layers of 3/16 in stacked, which is a little
-//            stronger than a single 1/4 in plate.
+//   plate  - 3/16 x 1-1/2 in steel flat bar, cut and drilled by hand.
 //            part = "plate_template" gives a 1:1 drawing to export as SVG,
 //            print at 100% and stick to the steel.
 //
@@ -86,13 +84,13 @@ swing_side = 1;        // [1, -1] +1 swings the free end toward +Y
 /* [Clamp plate] */
 plate_w     = 38.1;   // 1-1/2 in flat bar
 // The plate is loaded like a beam: the knobs pull its ends up and the bar
-// pushes its middle down.  Strength goes with the square of the thickness,
-// so a single 3/16 in plate sees nearly twice the stress of a 1/4 in one and
-// bends under a firm hand on the knobs.  Two loose 3/16 in layers are
-// slightly stronger than one 1/4 in plate; epoxied together, about twice as
-// strong.
+// pushes its middle down.  Strength goes with the square of the thickness.
+// A single 3/16 in plate stays straight up to roughly 1.4 kN of pull per
+// bolt -- snug on a star knob -- and takes a bow if the knobs are cranked.
+// 1/4 in stock takes about 1.8 times that; two loose 3/16 in layers slightly
+// more, and epoxied together about twice as much again.
 plate_ply    = 4.7625; // 3/16 in stock
-plate_layers = 2;      // layers stacked in each plate
+plate_layers = 1;      // layers stacked in each plate
 plate_t      = plate_ply * plate_layers;
 plate_end   = 16.0;   // steel beyond each bolt centre
 plate_hole  = 11.1;   // 7/16 in drill
