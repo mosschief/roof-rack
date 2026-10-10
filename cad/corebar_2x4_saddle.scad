@@ -22,7 +22,7 @@
 // ---------------------------------------------------------------------------
 
 /* [What to render] */
-part = "saddle";  // [saddle, pad, gauge, assembly]
+part = "saddle";  // [saddle, pad, gauge, drill_guide, assembly]
 
 include <corebar_profile.scad>
 
@@ -288,6 +288,42 @@ module gauge(t = 12) {
     }
 }
 
+// Drill guide for the 2x4.  Drops over the board, held square by its side
+// lips, with the two guide holes at the U-bolt's pitch.  Printed, so the
+// spacing cannot be shrunk by a paper printer.  Prints top face down, lips up,
+// with no supports.  Notches on both lips and across the rails mark the
+// crossbar's centreline.
+guide_t     = 8.0;    // top plate thickness; the length of hole that guides the bit
+guide_hole  = 11.5;   // 7/16 in bit is 11.1; printed holes come out small
+guide_wall  = 3.0;    // side lip thickness
+guide_lip   = 12.0;   // how far the lips hang down the sides of the board
+guide_block = 14.0;   // solid material from hole centre to the window
+
+module drill_guide() {
+    gx = leg_cc + 2 * guide_block;
+    gy = 2 * (y_in + guide_wall);
+    difference() {
+        union() {
+            translate([0, 0, guide_t / 2]) cube([gx, gy, guide_t], center = true);
+            for (s = [-1, 1])
+                translate([0, s * (y_in + guide_wall / 2), -guide_lip / 2])
+                    cube([gx, guide_wall, guide_lip + 0.01], center = true);
+        }
+        // the board
+        translate([0, 0, -guide_lip]) cube([gx + 2, 2 * y_in, 2 * guide_lip], center = true);
+        // guide holes
+        for (s = [-1, 1])
+            translate([s * leg_cc / 2, 0, 0])
+                cylinder(d = guide_hole, h = 100, center = true);
+        // window between the hole blocks, leaving a rail along each lip
+        cube([leg_cc - 2 * guide_block, 2 * y_in - 2 * 8, 100], center = true);
+        // centreline notches: across the rails and down the outside of the lips
+        translate([0, 0, guide_t]) cube([1.6, gy + 2, 2], center = true);
+        for (s = [-1, 1])
+            translate([0, s * (y_in + guide_wall), 0]) cube([1.6, 2, 100], center = true);
+    }
+}
+
 module assembly() {
     saddle();
     pad();
@@ -299,4 +335,5 @@ module assembly() {
 if      (part == "saddle")   saddle();
 else if (part == "pad")      pad();
 else if (part == "gauge")    gauge();
+else if (part == "drill_guide") rotate([180, 0, 0]) drill_guide();  // print orientation
 else if (part == "assembly") assembly();

@@ -69,6 +69,13 @@ at 100% / "Actual size" with "Fit to page" turned off, and check the scale bars
 with a ruler before you drill. It is drawn from the model's U-bolt size by
 `python3 docs/template/make_template.py`, so re-run that if you change it.
 
+If your paper printer will not print at exact scale, print
+`stl/ubolt-3.625in/drill-guide.stl` instead (`part = "drill_guide"`). It drops
+over the 2x4, held square by its side lips, with 7/16" guide holes at the
+U-bolt pitch. Line the notches on its lips up with the crossbar, clamp it, and
+drill through it. It prints top face down with no supports; PLA or PETG guides
+the bit better than TPU, but TPU works.
+
 ## Printing
 
 | U-bolt | Saddle | Pad | Gauge | Set of four |
