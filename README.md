@@ -60,6 +60,15 @@ Roughly $30 of hardware and $10–16 of lumber.
 Drill with a 7/16" bit, 9/16" wrench or socket, hacksaw and file for trimming
 the U-bolt legs, tape measure, and calipers if you have them.
 
+### Drilling template
+
+[docs/template/drill-template.pdf](docs/template/drill-template.pdf) is a
+true-scale US Letter sheet with cut-out strips for the 2x4 and for an optional
+1-1/2" flat-bar plate, both with the holes at the U-bolt's 4" pitch. Print it
+at 100% / "Actual size" with "Fit to page" turned off, and check the scale bars
+with a ruler before you drill. It is drawn from the model's U-bolt size by
+`python3 docs/template/make_template.py`, so re-run that if you change it.
+
 ## Printing
 
 | U-bolt | Saddle | Pad | Gauge | Set of four |
