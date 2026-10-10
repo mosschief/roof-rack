@@ -69,12 +69,13 @@ at 100% / "Actual size" with "Fit to page" turned off, and check the scale bars
 with a ruler before you drill. It is drawn from the model's U-bolt size by
 `python3 docs/template/make_template.py`, so re-run that if you change it.
 
-If your paper printer will not print at exact scale, print
-`stl/ubolt-3.625in/drill-guide.stl` instead (`part = "drill_guide"`). It drops
-over the 2x4, held square by its side lips, with 7/16" guide holes at the
-U-bolt pitch. Line the notches on its lips up with the crossbar, clamp it, and
-drill through it. It prints top face down with no supports; PLA or PETG guides
-the bit better than TPU, but TPU works.
+For the steel plate, `stl/ubolt-3.625in/plate-guide.stl`
+(`part = "plate_guide"`) is a printed guide that holds the spacing exactly,
+whatever your paper printer does. Cut 1-1/2" x 1/8" flat bar to 5.5", slide it
+into the channel against the end stop, clamp, and drill 1/8" pilots through
+both guide holes. Take the guide off and open the holes to 7/16". For thicker
+bar, change `flat_t`. The U-bolt's saddle marks the 2x4 itself: set it on the
+board and mark through its leg holes.
 
 ## Printing
 

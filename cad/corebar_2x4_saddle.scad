@@ -22,7 +22,7 @@
 // ---------------------------------------------------------------------------
 
 /* [What to render] */
-part = "saddle";  // [saddle, pad, gauge, drill_guide, assembly]
+part = "saddle";  // [saddle, pad, gauge, plate_guide, assembly]
 
 include <corebar_profile.scad>
 
@@ -288,39 +288,38 @@ module gauge(t = 12) {
     }
 }
 
-// Drill guide for the 2x4.  Drops over the board, held square by its side
-// lips, with the two guide holes at the U-bolt's pitch.  Printed, so the
-// spacing cannot be shrunk by a paper printer.  Prints top face down, lips up,
-// with no supports.  Notches on both lips and across the rails mark the
-// crossbar's centreline.
-guide_t     = 8.0;    // top plate thickness; the length of hole that guides the bit
-guide_hole  = 11.5;   // 7/16 in bit is 11.1; printed holes come out small
-guide_wall  = 3.0;    // side lip thickness
-guide_lip   = 12.0;   // how far the lips hang down the sides of the board
-guide_block = 14.0;   // solid material from hole centre to the window
+// Drill guide for the steel load-spreading plate, cut from 1-1/2 in flat bar.
+// The bar slides into the channel against the end stop and the two pilot
+// holes land at the U-bolt's pitch, centred across the bar.  Drill 1/8 in
+// pilots through the guide, take it off, then open both holes to 7/16 in.
+// Printed, so the spacing cannot be shrunk by a paper printer.  Prints top
+// face down, walls up, with no supports.
+flat_w      = 38.1;   // 1-1/2 in flat bar
+flat_t      = 3.2;    // 1/8 in; set to 4.8 for 3/16 in or 6.4 for 1/4 in
+flat_end    = 19.05;  // 3/4 in from each hole centre to the end of the plate
+guide_t     = 8.0;    // top thickness; the length of hole that guides the bit
+guide_hole  = 3.5;    // 1/8 in pilot bit is 3.2; printed holes come out small
+guide_fit   = 0.5;    // slack across the bar in the channel
+guide_wall  = 3.0;    // channel side walls and end stop
 
-module drill_guide() {
-    gx = leg_cc + 2 * guide_block;
-    gy = 2 * (y_in + guide_wall);
+module plate_guide() {
+    plate_len = leg_cc + 2 * flat_end;
+    cw = flat_w + guide_fit;               // channel width
+    gx = plate_len + guide_wall;           // the stop sits beyond one end
+    gy = cw + 2 * guide_wall;
+    x0 = -plate_len / 2;                   // the bar's end, against the stop
     difference() {
-        union() {
-            translate([0, 0, guide_t / 2]) cube([gx, gy, guide_t], center = true);
-            for (s = [-1, 1])
-                translate([0, s * (y_in + guide_wall / 2), -guide_lip / 2])
-                    cube([gx, guide_wall, guide_lip + 0.01], center = true);
-        }
-        // the board
-        translate([0, 0, -guide_lip]) cube([gx + 2, 2 * y_in, 2 * guide_lip], center = true);
-        // guide holes
+        translate([x0 - guide_wall + gx / 2, 0, (guide_t - flat_t) / 2])
+            cube([gx, gy, guide_t + flat_t], center = true);
+        // the channel the bar lies in
+        translate([x0 + plate_len / 2 + 1, 0, -flat_t / 2 - 1])
+            cube([plate_len + 2, cw, flat_t + 2], center = true);
+        // pilot holes
         for (s = [-1, 1])
             translate([s * leg_cc / 2, 0, 0])
                 cylinder(d = guide_hole, h = 100, center = true);
-        // window between the hole blocks, leaving a rail along each lip
-        cube([leg_cc - 2 * guide_block, 2 * y_in - 2 * 8, 100], center = true);
-        // centreline notches: across the rails and down the outside of the lips
-        translate([0, 0, guide_t]) cube([1.6, gy + 2, 2], center = true);
-        for (s = [-1, 1])
-            translate([0, s * (y_in + guide_wall), 0]) cube([1.6, 2, 100], center = true);
+        // window between the holes to save plastic and show the bar
+        cube([leg_cc - 2 * 14, cw - 2 * 6, 100], center = true);
     }
 }
 
@@ -335,5 +334,5 @@ module assembly() {
 if      (part == "saddle")   saddle();
 else if (part == "pad")      pad();
 else if (part == "gauge")    gauge();
-else if (part == "drill_guide") rotate([180, 0, 0]) drill_guide();  // print orientation
+else if (part == "plate_guide") rotate([180, 0, 0]) plate_guide();  // print orientation
 else if (part == "assembly") assembly();
