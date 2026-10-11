@@ -32,7 +32,7 @@ board_w = scad_value("board_w")
 pitch = (ubolt_inside + rod_d) * MM     # leg centre to centre
 drill = 7 / 16 * IN                     # clearance drill for a 3/8" leg
 board = board_w * MM                    # 3-1/2" face of a 2x4
-plate_w = 1.5 * IN                      # 1-1/2" steel flat bar
+plate_w = 1.25 * IN                     # 1-1/4" steel flat bar
 plate_end = 0.75 * IN                   # hole centre to end of the plate
 board_len = pitch + 2.5 * IN
 
@@ -122,7 +122,7 @@ px = bx + board + 1.3 * IN
 plate_len = pitch + 2 * plate_end
 template(
     px, ty + (board_len - plate_len) / 2, plate_w, plate_len,
-    "Steel plate (1-1/2\" flat bar)",
+    "Steel plate (1-1/4\" flat bar)",
     [f'Cut flat bar to {plate_len / IN:.1f}" long.',
      "Optional: replaces the two washers",
      "and spreads the nut load on the wood."])

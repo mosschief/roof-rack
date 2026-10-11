@@ -288,13 +288,13 @@ module gauge(t = 12) {
     }
 }
 
-// Drill guide for the steel load-spreading plate, cut from 1-1/2 in flat bar.
+// Drill guide for the steel load-spreading plate, cut from 1-1/4 in flat bar.
 // The bar slides into the channel against the end stop and the two pilot
 // holes land at the U-bolt's pitch, centred across the bar.  Drill 1/8 in
 // pilots through the guide, take it off, then open both holes to 7/16 in.
 // Printed, so the spacing cannot be shrunk by a paper printer.  Prints top
 // face down, walls up, with no supports.
-flat_w      = 38.1;   // 1-1/2 in flat bar
+flat_w      = 31.75;  // 1-1/4 in flat bar; 38.1 for 1-1/2 in
 flat_t      = 3.2;    // 1/8 in; set to 4.8 for 3/16 in or 6.4 for 1/4 in
 flat_end    = 19.05;  // 3/4 in from each hole centre to the end of the plate
 guide_t     = 8.0;    // top thickness; the length of hole that guides the bit

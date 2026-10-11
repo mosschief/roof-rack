@@ -64,17 +64,17 @@ the U-bolt legs, tape measure, and calipers if you have them.
 
 [docs/template/drill-template.pdf](docs/template/drill-template.pdf) is a
 true-scale US Letter sheet with cut-out strips for the 2x4 and for an optional
-1-1/2" flat-bar plate, both with the holes at the U-bolt's 4" pitch. Print it
+1-1/4" flat-bar plate, both with the holes at the U-bolt's 4" pitch. Print it
 at 100% / "Actual size" with "Fit to page" turned off, and check the scale bars
 with a ruler before you drill. It is drawn from the model's U-bolt size by
 `python3 docs/template/make_template.py`, so re-run that if you change it.
 
 For the steel plate, `stl/ubolt-3.625in/plate-guide.stl`
 (`part = "plate_guide"`) is a printed guide that holds the spacing exactly,
-whatever your paper printer does. Cut 1-1/2" x 1/8" flat bar to 5.5", slide it
+whatever your paper printer does. Cut 1-1/4" x 1/8" flat bar to 5.5", slide it
 into the channel against the end stop, clamp, and drill 1/8" pilots through
-both guide holes. Take the guide off and open the holes to 7/16". For thicker
-bar, change `flat_t`. The U-bolt's saddle marks the 2x4 itself: set it on the
+both guide holes. Take the guide off and open the holes to 7/16". For other bar,
+change `flat_w` and `flat_t`. The U-bolt's saddle marks the 2x4 itself: set it on the
 board and mark through its leg holes.
 
 ## Printing
